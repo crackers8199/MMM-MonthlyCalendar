@@ -195,7 +195,7 @@ Module.register("MMM-MonthlyCalendar", {
 
     for (var day = 0; day < 7; ++day) {
       const headerDate = new Date(now.getFullYear(), now.getMonth(), cellIndex + day);
-      row.appendChild(el("th", { "className": "header", "innerHTML": headerDate.toLocaleString(config.language, { weekday: "long" }) }));
+      row.appendChild(el("th", { "className": "header", "innerHTML": headerDate.toLocaleString(config.language, { weekday: "short" }) }));
     }
     table.appendChild(row);
 
@@ -225,7 +225,7 @@ Module.register("MMM-MonthlyCalendar", {
           cellDay = cellDate.toLocaleString(config.language, { month: "short", day: "numeric" });
         }
 
-        cell.appendChild(el("div", { "innerHTML": cellDay }));
+        cell.appendChild(el("div", { "className": "day-num", "innerHTML": cellDay }));
         row.appendChild(cell);
         dateCells[cellIndex] = cell;
       }
@@ -237,12 +237,19 @@ Module.register("MMM-MonthlyCalendar", {
     var monthEnd = new Date(now.getFullYear(), now.getMonth(), monthDays, 23, 59, 59);
     for (var i in self.events) {
       var e = self.events[i];
-
+      e.isMultiDay = (e.startDate.getDate() != e.endDate.getDate());
+	   
+      //console.log(e);
       for (var eventDate = e.startDate; eventDate <= e.endDate; eventDate = addOneDay(eventDate)) {
         var dayDiff = diffDays(eventDate, monthStart);
 
         if (dayDiff in dateCells) {
           let div = el("div", { "className": "event" });
+
+	  if(e.fullDayEvent) {
+	    div.className = 'event-full';
+	  }
+
           if (!self.config.wrapTitles) {
             div.classList.add("event-nowrap");
           }
@@ -257,7 +264,7 @@ Module.register("MMM-MonthlyCalendar", {
                 return `${h}:${m}`;
               }
             }
-            div.appendChild(el("span", { "className": "event-label", "innerText": formatTime(e.startDate) }));
+            div.appendChild(el("div", { "className": "event-label", "innerText": formatTime(e.startDate) }));
           }
 
           if (self.config.displaySymbol) {
@@ -266,8 +273,12 @@ Module.register("MMM-MonthlyCalendar", {
             }
           }
 
-          div.appendChild(el("span", { "innerText": e.title }));
+          div.appendChild(el("div", { "className": "event-title", "innerText": e.title }));
 
+	  //console.log(e.startDate);
+	  //console.log(e.endDate);
+//console.log(e.startDate.getDate());
+	//	console.log(dayDiff);
           if (e.color) {
             var c = e.color;
 
