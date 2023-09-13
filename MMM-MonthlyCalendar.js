@@ -221,11 +221,12 @@ Module.register("MMM-MonthlyCalendar", {
           cell.classList.add("past-date");
         }
 
+	var dayNumDay = cellDay;
         if ((week === 0 && day === 0) || cellDay === 1) {
           cellDay = cellDate.toLocaleString(config.language, { month: "short", day: "numeric" });
         }
 
-        cell.appendChild(el("div", { "className": "day-num", "innerHTML": cellDay }));
+        cell.appendChild(el("div", { "id": "dayNum" + dayNumDay, "className": "day-num", "innerHTML": cellDay }));
         row.appendChild(cell);
         dateCells[cellIndex] = cell;
       }
@@ -235,11 +236,12 @@ Module.register("MMM-MonthlyCalendar", {
 
     var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     var monthEnd = new Date(now.getFullYear(), now.getMonth(), monthDays, 23, 59, 59);
+    // console.log(self.events);
     for (var i in self.events) {
       var e = self.events[i];
       e.isMultiDay = (e.startDate.getDate() != e.endDate.getDate());
 	   
-      //console.log(e);
+      // console.log(e);
       for (var eventDate = e.startDate; eventDate <= e.endDate; eventDate = addOneDay(eventDate)) {
         var dayDiff = diffDays(eventDate, monthStart);
 
@@ -273,26 +275,60 @@ Module.register("MMM-MonthlyCalendar", {
             }
           }
 
-          div.appendChild(el("div", { "className": "event-title", "innerText": e.title }));
+	  // console.log(e);
+	  if(e.fullDayEvent) {
+	    var eventTitle = e.title;
+	    if(e.calendarName == 'mm_birthdays') {
+	      eventTitle = eventTitle + '\'s Birthday';;
+	    }
 
-	  //console.log(e.startDate);
-	  //console.log(e.endDate);
-//console.log(e.startDate.getDate());
-	//	console.log(dayDiff);
+            div.appendChild(el("div", { "className": "event-title", "innerText": eventTitle }));
+		  
+	  }
+	  else { 
+            // div.appendChild(el("div", { "className": "event-title", "style": "border: " + e.color + " 1px solid;", "innerText": e.title }));
+            div.appendChild(el("div", { "className": "event-title", "style": "background-color: " + e.bgColor + "; color: " + e.color +  ";", "innerText": e.title }));
+	  }
+
+	  // console.log(e.startDate);
+	  // console.log(e.endDate);
+	  // console.log(e.startDate.getDate());
+	  // console.log(dayDiff);
           if (e.color) {
             var c = e.color;
 
             if (e.fullDayEvent) {
-              div.style.backgroundColor = c;
-              if (getLuminance(div.style.backgroundColor) >= self.config.luminanceThreshold) {
-                div.style.color = "black";
-              }
+	      if(e.bgColor) {
+	        div.style.backgroundColor = e.bgColor;
+		div.style.color = e.color;
+	      }
+	      else {
+                div.style.backgroundColor = c;
+                if (getLuminance(div.style.backgroundColor) >= self.config.luminanceThreshold) {
+                  div.style.color = "black";
+                }
+	      }
             } else {
-              div.style.color = c;
+	      // console.log(div);
+              // div.style.color = c;
+	      // div.style.border = c + ' 1px solid';
             }
           }
 
-          dateCells[dayDiff].appendChild(div);
+		//console.log(dateCells[dayDiff].firstChild);
+	  if(e.fullDayEvent && e.calendarName == 'dakboard_dinner') {	
+	    var element = dateCells[dayDiff].firstChild;
+	    if(element.classList[0] == 'day-num') {
+	      dateCells[dayDiff].removeChild(element);
+	    }
+
+	    dateCells[dayDiff].prepend(div);
+	    dateCells[dayDiff].prepend(element);
+
+	  }
+	  else {
+            dateCells[dayDiff].appendChild(div);
+	  }
         }
       }
     }
