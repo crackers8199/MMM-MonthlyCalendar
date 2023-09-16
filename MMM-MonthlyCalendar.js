@@ -266,21 +266,44 @@ Module.register("MMM-MonthlyCalendar", {
                 return `${h}:${m}`;
               }
             }
-            div.appendChild(el("div", { "className": "event-label", "innerText": formatTime(e.startDate) }));
-          }
+	    
+	    //if(e.calendarName != 'dinner' && e.calendarName != 'events') {
+	    if(!e.hideCalendarName) {
+	      if(self.config.displaySymbol) {
+	        for(let symbol of e.symbol) {
+	          div.appendChild(el("span", { "className": `event-label partial fa fa-${symbol}`, "style": "color: " + e.color + ";"  }));
+		}
+	      }
+              //div.appendChild(el("div", { "className": "event-label", "style": "background-color: " + e.bgColor + "; color: " + e.color + ";", "innerText": formatTime(e.startDate) + " | " + e.calendarName }));
+              div.appendChild(el("div", { "className": "event-label", "style": "background-color: " + e.bgColor + "; color: " + e.color + ";", "innerText": formatTime(e.startDate )}));
+	    }
+	    else {
+              div.appendChild(el("div", { "className": "event-label", "style": "background-color: " + e.bgColor + "; color: " + e.color + ";", "innerText": formatTime(e.startDate )}));
+	    }
 
-          if (self.config.displaySymbol) {
-            for (let symbol of e.symbol) {
-              div.appendChild(el("span", { "className": `event-label fa fa-${symbol}` }));
-            }
-          }
+	  }
+
+          //if (self.config.displaySymbol) {
+          //  for (let symbol of e.symbol) {
+          //    div.appendChild(el("span", { "className": `event-label fa fa-${symbol}` }));
+          //  }
+          //}
 
 	  // console.log(e);
 	  if(e.fullDayEvent) {
 	    var eventTitle = e.title;
-	    if(e.calendarName == 'mm_birthdays') {
-	      eventTitle = eventTitle + '\'s Birthday';;
-	    }
+	
+            if (self.config.displaySymbol) {
+              for (let symbol of e.symbol) {
+                div.appendChild(el("span", { "className": `event-label fa fa-${symbol}` }));
+		//eventTitle = '<i class="event-label fa fa-${symbol)"></i> ' + eventTitle;
+              }
+            }
+
+	    // todo: allow specifying text to append or prepend to titles in config rather than hard coded
+	    //if(e.calendarName == 'birthdays') {
+	    //  eventTitle = eventTitle + '\'s Birthday';;
+	    //}
 
             div.appendChild(el("div", { "className": "event-title", "innerText": eventTitle }));
 		  
@@ -316,7 +339,10 @@ Module.register("MMM-MonthlyCalendar", {
           }
 
 		//console.log(dateCells[dayDiff].firstChild);
-	  if(e.fullDayEvent && e.calendarName == 'dakboard_dinner') {	
+	
+	  // todo: allow specifying calendar name to move to top as variable in config
+	  // todo: allow multiple calendars to be pinned at top, in whatever order specified
+	  if(e.fullDayEvent && e.calendarName == 'dinner') {	
 	    var element = dateCells[dayDiff].firstChild;
 	    if(element.classList[0] == 'day-num') {
 	      dateCells[dayDiff].removeChild(element);
