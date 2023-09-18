@@ -69,6 +69,7 @@ Module.register("MMM-MonthlyCalendar", {
     firstDayOfWeek: "sunday",
     showWeekNumber: false,
     displaySymbol: false,
+    showLocations: false,
     wrapTitles: false,
     hideCalendars: [],
     luminanceThreshold: 110,
@@ -314,10 +315,10 @@ Module.register("MMM-MonthlyCalendar", {
             div.appendChild(el("div", { "className": "event-title", "style": "background-color: " + e.bgColor + "; color: " + e.color +  ";", "innerText": e.title }));
 	  }
 
-	  if(e.location && e.fullDayEvent && e.calendarName != 'us_holiday') {
+	  if(this.config.showLocations && e.location && e.fullDayEvent && e.calendarName != 'us_holiday') {
 	    div.appendChild(el("div", { "className": "event-location-full", "style": "background-color: " + e.bgColor + "; color: " + e.color +  ";", "innerText": e.location }));
 	  }
-	  else if(e.location && e.calendarName != 'us_holiday') {
+	  else if(this.config.showLocations && e.location && e.calendarName != 'us_holiday') {
 	    div.appendChild(el("div", { "className": "event-location", "style": "background-color: " + e.bgColor + "; color: " + e.color +  ";", "innerText": e.location }));
 	  }
 
