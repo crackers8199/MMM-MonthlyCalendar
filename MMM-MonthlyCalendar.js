@@ -239,6 +239,7 @@ Module.register("MMM-MonthlyCalendar", {
     // console.log(self.events);
     for (var i in self.events) {
       var e = self.events[i];
+      //console.log(e);
       e.isMultiDay = (e.startDate.getDate() != e.endDate.getDate());
 	   
       // console.log(e);
@@ -313,6 +314,13 @@ Module.register("MMM-MonthlyCalendar", {
             div.appendChild(el("div", { "className": "event-title", "style": "background-color: " + e.bgColor + "; color: " + e.color +  ";", "innerText": e.title }));
 	  }
 
+	  if(e.location && e.fullDayEvent && e.calendarName != 'us_holiday') {
+	    div.appendChild(el("div", { "className": "event-location-full", "style": "background-color: " + e.bgColor + "; color: " + e.color +  ";", "innerText": e.location }));
+	  }
+	  else if(e.location && e.calendarName != 'us_holiday') {
+	    div.appendChild(el("div", { "className": "event-location", "style": "background-color: " + e.bgColor + "; color: " + e.color +  ";", "innerText": e.location }));
+	  }
+
 	  // console.log(e.startDate);
 	  // console.log(e.endDate);
 	  // console.log(e.startDate.getDate());
@@ -337,6 +345,7 @@ Module.register("MMM-MonthlyCalendar", {
 	      // div.style.border = c + ' 1px solid';
             }
           }
+	 
 
 		//console.log(dateCells[dayDiff].firstChild);
 	
